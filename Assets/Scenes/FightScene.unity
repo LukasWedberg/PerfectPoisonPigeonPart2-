@@ -573,6 +573,11 @@ CharacterJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
+--- !u!23 &730245513 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -6652725513331149018, guid: 4f6ca1c7de8110c4b9b1b9d2cd91bc84, type: 3}
+  m_PrefabInstance: {fileID: 200338760}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &790253099
 GameObject:
   m_ObjectHideFlags: 0
@@ -805,13 +810,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93ed7e1b772a7b541a749959b673529c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  target1Renderer: {fileID: 730245513}
   target2: {fileID: 2074959192}
+  target2Renderer: {fileID: 1293600324}
   heightAbovePlayer: 2
-  maxCameraDistance: 40
-  minCameraDistance: 5
+  maxCameraDistance: 10
+  minCameraDistance: 8.5
   minFollowDistance: 2
   extraZoomDist: 0
+  horizontalPixelBounds: 88
   playerFocus: 0.5
+  forwardPositionLerpSpeed: 0.2
+  backwardPositionLerpSpeed: 0.08
 --- !u!1 &1058235291 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8644743743915174031, guid: 4f6ca1c7de8110c4b9b1b9d2cd91bc84, type: 3}
@@ -1055,6 +1065,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: a881c010b84be794d8affd609470c5aa, type: 3}
   m_PrefabInstance: {fileID: 1293600322}
   m_PrefabAsset: {fileID: 0}
+--- !u!23 &1293600324 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -7511558181221131132, guid: a881c010b84be794d8affd609470c5aa, type: 3}
+  m_PrefabInstance: {fileID: 1293600322}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1325522896
 GameObject:
   m_ObjectHideFlags: 0
@@ -1075,7 +1090,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!135 &1325522897
 SphereCollider:
   m_ObjectHideFlags: 0
