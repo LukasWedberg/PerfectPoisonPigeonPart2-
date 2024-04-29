@@ -20,9 +20,6 @@
         },
         {
             "m_Id": "51078bbd10714ddb999039d1aaa20e16"
-        },
-        {
-            "m_Id": "7742ecfac9a5474d9b3ae64cad6eecc0"
         }
     ],
     "m_Keywords": [],
@@ -116,9 +113,6 @@
         },
         {
             "m_Id": "41a87b871f8c49e3b90df33a93509065"
-        },
-        {
-            "m_Id": "0d79e910d6b24a22a674a9b7e45d8183"
         }
     ],
     "m_GroupDatas": [],
@@ -690,41 +684,6 @@
 
 {
     "m_SGVersion": 0,
-    "m_Type": "UnityEditor.ShaderGraph.PropertyNode",
-    "m_ObjectId": "0d79e910d6b24a22a674a9b7e45d8183",
-    "m_Group": {
-        "m_Id": ""
-    },
-    "m_Name": "Property",
-    "m_DrawState": {
-        "m_Expanded": true,
-        "m_Position": {
-            "serializedVersion": "2",
-            "x": -1930.0,
-            "y": 512.0,
-            "width": 168.5,
-            "height": 34.0
-        }
-    },
-    "m_Slots": [
-        {
-            "m_Id": "17c8df256c6b46a0b703ac2d1e495dfe"
-        }
-    ],
-    "synonyms": [],
-    "m_Precision": 0,
-    "m_PreviewExpanded": true,
-    "m_PreviewMode": 0,
-    "m_CustomColors": {
-        "m_SerializableColors": []
-    },
-    "m_Property": {
-        "m_Id": "7742ecfac9a5474d9b3ae64cad6eecc0"
-    }
-}
-
-{
-    "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.DynamicVectorMaterialSlot",
     "m_ObjectId": "0ea50781438d409daa37db4390a035b6",
     "m_Id": 2,
@@ -886,21 +845,6 @@
 
 {
     "m_SGVersion": 0,
-    "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
-    "m_ObjectId": "17c8df256c6b46a0b703ac2d1e495dfe",
-    "m_Id": 0,
-    "m_DisplayName": "DistanceMultiplier",
-    "m_SlotType": 1,
-    "m_Hidden": false,
-    "m_ShaderOutputName": "Out",
-    "m_StageCapability": 3,
-    "m_Value": 0.0,
-    "m_DefaultValue": 0.0,
-    "m_Labels": []
-}
-
-{
-    "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.DynamicValueMaterialSlot",
     "m_ObjectId": "1c0ec7e5e37546e78898bdd05d878fe8",
     "m_Id": 0,
@@ -994,7 +938,7 @@
         "r": 0.08235294371843338,
         "g": 0.250980406999588,
         "b": 0.2705882489681244,
-        "a": 0.0
+        "a": 1.0
     },
     "isMainColor": false,
     "m_ColorMode": 0
@@ -1122,9 +1066,9 @@
     "hlslDeclarationOverride": 0,
     "m_Hidden": false,
     "m_Value": {
-        "r": 1.0,
-        "g": 0.05286577716469765,
-        "b": 0.02358490228652954,
+        "r": 0.12266482412815094,
+        "g": 0.12192948162555695,
+        "b": 0.4716981053352356,
         "a": 1.0
     },
     "isMainColor": false,
@@ -1220,10 +1164,10 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -2069.5,
-            "y": 1007.5,
-            "width": 139.5,
-            "height": 34.0
+            "x": -2069.60009765625,
+            "y": 1006.4000244140625,
+            "width": 140.0,
+            "height": 33.5999755859375
         }
     },
     "m_Slots": [
@@ -2161,33 +2105,6 @@
 }
 
 {
-    "m_SGVersion": 1,
-    "m_Type": "UnityEditor.ShaderGraph.Internal.Vector1ShaderProperty",
-    "m_ObjectId": "7742ecfac9a5474d9b3ae64cad6eecc0",
-    "m_Guid": {
-        "m_GuidSerialized": "46f87549-efab-4890-86a0-1fdf84047a8b"
-    },
-    "m_Name": "DistanceMultiplier",
-    "m_DefaultRefNameVersion": 1,
-    "m_RefNameGeneratedByDisplayName": "DistanceMultiplier",
-    "m_DefaultReferenceName": "_DistanceMultiplier",
-    "m_OverrideReferenceName": "",
-    "m_GeneratePropertyBlock": true,
-    "m_UseCustomSlotLabel": false,
-    "m_CustomSlotLabel": "",
-    "m_Precision": 0,
-    "overrideHLSLDeclaration": false,
-    "hlslDeclarationOverride": 0,
-    "m_Hidden": false,
-    "m_Value": 4.0,
-    "m_FloatType": 0,
-    "m_RangeValues": {
-        "x": 0.0,
-        "y": 1.0
-    }
-}
-
-{
     "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.DynamicVectorMaterialSlot",
     "m_ObjectId": "7986000c04084e30a6980f5d17a14dcd",
@@ -2552,7 +2469,7 @@
         "r": 0.6117647290229797,
         "g": 0.843137264251709,
         "b": 0.8274509906768799,
-        "a": 0.0
+        "a": 1.0
     },
     "isMainColor": false,
     "m_ColorMode": 0
@@ -3523,9 +3440,6 @@
     "m_ObjectId": "fe8300274afb4d5e87e48f292406d4ac",
     "m_Name": "FancyDepthEffect",
     "m_ChildObjectList": [
-        {
-            "m_Id": "7742ecfac9a5474d9b3ae64cad6eecc0"
-        },
         {
             "m_Id": "26a2bfcd28ad478e90adbbbeae02f264"
         },
