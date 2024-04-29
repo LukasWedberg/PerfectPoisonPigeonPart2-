@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class CameraManager : MonoBehaviour
@@ -52,13 +53,12 @@ public class CameraManager : MonoBehaviour
 
 
     [SerializeField]
-    float forwardPositionLerpSpeed = .02f;
+    float positionLerpSpeed = .2f;
     
     [SerializeField]
-    float backwardPositionLerpSpeed = .02f;
+    float rotationLerpSpeed = .2f;
 
 
-    float currentPositionLerpSpeed = .02f;
 
 
     // Start is called before the first frame update
@@ -85,7 +85,7 @@ public class CameraManager : MonoBehaviour
 
         
 
-        if (playerScript.currentPigeonState != PigeonController.PigeonState.Respawning)
+        if (playerScript.currentPigeonState != PigeonController.PigeonState.Respawning && playerScript.currentPigeonState != PigeonController.PigeonState.Biting)
         {
             //Camera Logic:
             //Rotate around the player towards a specific point. 
@@ -104,12 +104,11 @@ public class CameraManager : MonoBehaviour
             //maxCameraDistance = zoomAmount + extraZoomDist;
 
 
-            transform.position = new Vector3(transform.position.x, targetPoint.y + heightAbovePlayer, transform.position.z);
+            //transform.position = new Vector3(transform.position.x, targetPoint.y + heightAbovePlayer, transform.position.z);
             
             Vector3 originDirection = targetPoint - transform.position;
 
-            //targetRot = ;
-
+           
             float currentCamHorizontalDist = Vector3.Distance(new Vector3(target.position.x,0,target.position.z) , new Vector3(transform.position.x, 0, transform.position.z));
 
 
@@ -140,13 +139,13 @@ public class CameraManager : MonoBehaviour
 
             //}
 
-            Debug.Log(currentCamHorizontalDist);
+            //Debug.Log(currentCamHorizontalDist);
 
-            
+           
             if (currentCamHorizontalDist > maxCameraDistance)
             {
 
-                pointToLerpTo = target.position + transform.forward * -maxCameraDistance;// * -Mathf.Lerp(20f, 30f, maxCameraDistance / 40f);
+                pointToLerpTo =  target.position + transform.forward * -maxCameraDistance;// * -Mathf.Lerp(20f, 30f, maxCameraDistance / 40f);
 
 
                 
@@ -162,12 +161,11 @@ public class CameraManager : MonoBehaviour
 
 
 
-            //transform.position = Vector3.Lerp(transform.position, pointToLerpTo, currentPositionLerpSpeed);
+           
+            transform.position = Vector3.Lerp(transform.position, new Vector3(0, heightAbovePlayer, 0) + pointToLerpTo, positionLerpSpeed * Time.deltaTime);
 
-            transform.position = Vector3.Lerp(transform.position, pointToLerpTo, .02f);
 
-
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, .02f);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, rotationLerpSpeed * Time.deltaTime);
 
 
 
@@ -207,6 +205,7 @@ public class CameraManager : MonoBehaviour
 
         }
 
+
     }
 
 
@@ -224,7 +223,7 @@ public class CameraManager : MonoBehaviour
             playerOnScreen = true;
         }
 
-        //Next we need to see if the bnoss is onScreen
+        //Next we need to see if the boss is onScreen
 
         //First we check if the player is onscreen
 

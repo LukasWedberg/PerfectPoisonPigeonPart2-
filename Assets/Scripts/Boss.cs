@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Lukas.Utilities;
+using System;
+using System.Linq;
+using static UnityEngine.EventSystems.EventTrigger;
 
 public class Boss : BitableObject
 {
@@ -54,6 +57,12 @@ public class Boss : BitableObject
 
         MakerandomWarpsBag();
 
+
+        BossAttackManager.onEndBossAttack += ActivateCooldown;
+
+        //This next line is just testing to see if we can call the delegate!
+        //BossAttackManager.onBeginBossAttack.Invoke(BossAttackManager.BossAttackType.Flooding);
+
     }
 
     void Update()
@@ -77,7 +86,7 @@ public class Boss : BitableObject
                 
             }
 
-            transform.position = Vector3.Lerp(transform.position, targetPos, flyAwayLerpSpeed);
+            transform.position = Vector3.Lerp(transform.position, targetPos, flyAwayLerpSpeed * Time.deltaTime);
         }
 
         switch (currentBossState)
@@ -88,17 +97,19 @@ public class Boss : BitableObject
                 {
                     transform.LookAt(player.position);
 
-                    if (cooldownTimer > 0)
-                    {
-                        cooldownTimer -= Time.deltaTime;
-                    }
-                    else
-                    {
-                        cooldownTimer = cooldownTime;
+                    
 
-                        currentBossState = BossState.attacking;
-                    }
+                }
 
+                if (cooldownTimer > 0)
+                {
+                    cooldownTimer -= Time.deltaTime;
+                }
+                else
+                {
+                    cooldownTimer = cooldownTime;
+
+                    currentBossState = BossState.attacking;
                 }
 
 
@@ -108,14 +119,22 @@ public class Boss : BitableObject
 
             case BossState.attacking:
 
-                if (Vector3.Distance(player.position, transform.position) < 40)
+                if (Vector3.Distance(player.position, transform.position) < 100)
                 {
+                    if (!BossAttackManager.currentlyAttacking)
+                    {
+                        BossAttackManager.BossAttackType randomAttack = (BossAttackManager.BossAttackType)UnityEngine.Random.Range(0, 2); //System.Enum.GetValues(typeof(BossAttackManager.BossAttackType)).Length);
+
+                        BossAttackManager.onBeginBossAttack.Invoke(randomAttack);
+
+                        Debug.Log("Take that!");
+
+                    }
 
                     transform.LookAt(player.position);
 
-                    Debug.Log("Take that!");
-
-                    currentBossState = BossState.cooldown;
+                    
+                    //currentBossState = BossState.cooldown;
 
                 }
 
@@ -150,7 +169,15 @@ public class Boss : BitableObject
 
         if (staminaPoints <= 0 && currentBossState != BossState.Bitten)
         {
+            BossAttackManager.onEndBossAttack -= ActivateCooldown;
+
             currentBossState = BossState.vulnerable;
+
+
+
+        }
+        else
+        {
 
             Transform randomWarpPointPicked = randomWarpsBag[0];
 
@@ -163,7 +190,10 @@ public class Boss : BitableObject
 
             targetPos = randomWarpPointPicked.position;
 
+           
         }
+
+        BossAttackManager.onEndBossAttack.Invoke();
     }
 
     void MakerandomWarpsBag()
@@ -177,7 +207,7 @@ public class Boss : BitableObject
         for (int t = 0; t < randomWarpsBag.Count; t++)
         {
             Transform temporary = randomWarpsBag[t];
-            int randomIndex = Random.Range(t, randomWarpsBag.Count);
+            int randomIndex = UnityEngine.Random.Range(t, randomWarpsBag.Count);
             randomWarpsBag[t] = randomWarpsBag[randomIndex];
             randomWarpsBag[randomIndex] = temporary;
         }
@@ -187,9 +217,14 @@ public class Boss : BitableObject
     {
         if (base.OnTriggerEnter(other))
         {
-            currentBossState = BossState.Bitten;
+            if (currentBossState == BossState.vulnerable)
+            {
+                currentBossState = BossState.Bitten;
 
-            return true;
+                return true;
+            }
+
+
 
         }
         else
@@ -220,6 +255,13 @@ public class Boss : BitableObject
         }
         
         return false;
+    }
+
+    
+
+    void ActivateCooldown()
+    {
+        currentBossState = BossState.cooldown;
     }
 
 

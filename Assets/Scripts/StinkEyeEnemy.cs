@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class StinkEyeEnemy : BitableObject
 {
-    enum EyeState {
+    public enum EyeState {
         ChargingBlast,
         Aiming,
         Bitten
@@ -12,15 +12,17 @@ public class StinkEyeEnemy : BitableObject
 
     Transform player;
 
+    public Transform target;
+
     Transform boss;
     Boss bossScript;
 
-    EyeState currentEyeState = EyeState.Aiming;
+    public EyeState currentEyeState = EyeState.Aiming;
 
 
     [SerializeField]
     float chargeTime = 1f;
-    float chargeTimer = 0f;
+    public float chargeTimer = 0f;
 
 
     [SerializeField]
@@ -29,11 +31,16 @@ public class StinkEyeEnemy : BitableObject
 
     [SerializeField]
     float aimTime = .1f;
-    float aimTimer = 0f;
+    public float aimTimer = 0f;
 
     [SerializeField]
     float shakiness = 1f;
 
+    [SerializeField]
+    float floatiness = 1f;
+    
+    [SerializeField]
+    float floatinessSpeed = .1f;
 
     [SerializeField]
     float posLerpSpeed = 3f;
@@ -48,8 +55,9 @@ public class StinkEyeEnemy : BitableObject
     GameObject[] bulletPrefabs;
 
 
-
     public Vector3 targetPos;
+
+    public Vector3 anchorPos;
 
 
 
@@ -70,6 +78,9 @@ public class StinkEyeEnemy : BitableObject
 
         rapidFireTimer = rapidFireTime;
 
+
+        target = player;
+
     }
 
 
@@ -79,15 +90,17 @@ public class StinkEyeEnemy : BitableObject
         {
             case EyeState.Aiming:
 
-                transform.position = Vector3.Lerp(transform.position, targetPos, Time.deltaTime * posLerpSpeed);
+                transform.position = Vector3.Lerp(transform.position, targetPos, Time.deltaTime * posLerpSpeed) 
+                    + new Vector3(0, Mathf.Sin(Time.realtimeSinceStartup * floatinessSpeed) * floatiness ,0);
 
                 
 
-                if (bossScript.currentBossState != Boss.BossState.vulnerable && bossScript.currentBossState != Boss.BossState.vulnerable && Vector3.Distance(player.position, transform.position) < 20 ) 
+                if (bossScript.currentBossState != Boss.BossState.vulnerable && bossScript.currentBossState != Boss.BossState.vulnerable && Vector3.Distance(target.position, transform.position) < 20 ) 
                 {
 
-                    transform.LookAt(player);
+                    //transform.LookAt(target);
 
+                    transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(target.position - transform.position), .1f);
 
                     if (aimTimer < aimTime)
                     {
@@ -112,9 +125,12 @@ public class StinkEyeEnemy : BitableObject
 
                 
 
-                if (bossScript.currentBossState != Boss.BossState.vulnerable && bossScript.currentBossState != Boss.BossState.vulnerable && Vector3.Distance(player.position, transform.position) < 20)
+                if (bossScript.currentBossState != Boss.BossState.vulnerable && bossScript.currentBossState != Boss.BossState.vulnerable && Vector3.Distance(target.position, transform.position) < 20)
                 {
-                    transform.LookAt(player);
+                    //transform.LookAt(target);
+
+                    transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(target.position - transform.position), .1f);
+
 
                     if (chargeTimer < chargeTime)
                     {
@@ -188,17 +204,22 @@ public class StinkEyeEnemy : BitableObject
     {
         if (currentEyeState == EyeState.Bitten)
         {
-            transform.position = targetPos + new Vector3(Random.Range(-1.01f, 1.01f) * shakiness, Random.Range(-1.01f, 1.01f) * shakiness, Random.Range(-1.01f, 1.01f) * shakiness);
+            transform.position = anchorPos + new Vector3(Random.Range(-1.01f, 1.01f) * shakiness, Random.Range(-1.01f, 1.01f) * shakiness, Random.Range(-1.01f, 1.01f) * shakiness);
 
         }
 
     }
+
+    
 
     protected override bool OnTriggerEnter(Collider other)
     {
         if (base.OnTriggerEnter(other))
         {
             currentEyeState = EyeState.Bitten;
+
+            anchorPos = transform.position;
+
 
             return true;
 
@@ -217,6 +238,7 @@ public class StinkEyeEnemy : BitableObject
 
         if (base.OnTriggerStay(other))
         {
+            
             currentEyeState = EyeState.Bitten;
 
             return true;
@@ -236,6 +258,10 @@ public class StinkEyeEnemy : BitableObject
         if (other.CompareTag("Player"))
         {
             currentEyeState = EyeState.Aiming;
+
+            anchorPos = Vector3.zero;
+
+            Debug.Log("Back to it!");
 
         }
     }

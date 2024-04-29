@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class PigeonController : MonoBehaviour
 {
-    CharacterController controller;
+    [HideInInspector]
+    public CharacterController controller;
 
     Camera cam;
 
@@ -28,13 +29,13 @@ public class PigeonController : MonoBehaviour
     float verticalVelocity = 0;
 
     [SerializeField]
-    float maxEnergy = 100;
+    public float maxEnergy = 100;
 
     [SerializeField]
-    float currentEnergy = 100;
+    public float currentEnergy = 100;
 
     [SerializeField]
-    float jumpEnergyCost = 20;
+    public float jumpEnergyCost = 20;
 
     [SerializeField]
     CharacterJoint[] myCharacterJoints;
@@ -66,6 +67,15 @@ public class PigeonController : MonoBehaviour
     Animator animController;
 
 
+    public delegate void WingFlap(float targetOpacity);
+    public static event WingFlap onWingFlap;
+
+    public delegate void Landed(float targetOpacity);
+    public static event Landed onLanded;
+
+    public Transform footLevel;
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -78,7 +88,7 @@ public class PigeonController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (transform.position.y < -10)
+        if (transform.position.y < -10 || CheckIfWet())
         {
             Respawn();
         }
@@ -128,12 +138,14 @@ public class PigeonController : MonoBehaviour
 
                         animController.SetBool("GroundedJump", true);
 
+                        onWingFlap.Invoke(1);
+
                         
                     }
                     else
                     {
                         
-                        verticalVelocity = -0.3f;
+                        verticalVelocity = -0.5f;
                     }
                 }
                 else
@@ -148,7 +160,7 @@ public class PigeonController : MonoBehaviour
 
                     if (Input.GetKeyDown(KeyCode.Space))
                     {
-                        if (currentEnergy > jumpEnergyCost)
+                        if (currentEnergy >= jumpEnergyCost)
                         {
                             //animController.SetBool("FlappingPigeonJump", true);
                             animController.Play("PigeonFlap");
@@ -344,6 +356,18 @@ public class PigeonController : MonoBehaviour
         
         
     
+    }
+
+    bool CheckIfWet()
+    {
+        if (footLevel.position.y < WaterManager.instance.GetWaveHeight(transform.position.x))
+        {
+            return true;
+        }
+
+
+
+        return false;
     }
 
 
