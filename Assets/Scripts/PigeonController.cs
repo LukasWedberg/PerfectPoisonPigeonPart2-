@@ -268,7 +268,7 @@ public class PigeonController : MonoBehaviour
 
             Ragdoll(null);
 
-            controller.enabled = false;
+            //controller.enabled = false;
 
             animController.SetBool("Freefall", false);
 

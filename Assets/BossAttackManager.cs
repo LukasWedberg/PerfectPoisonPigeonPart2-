@@ -58,9 +58,13 @@ public class BossAttackManager : MonoBehaviour
                 
                 break;
 
+            case BossAttackType.SentryEyes:
+                onCurrentAttack = SentryEyesFunction; 
+                break;
+
             case BossAttackType.Madness:
                 onCurrentAttack = FloodingFunction;
-                onCurrentAttack += CirclingEyesFunction;
+                onCurrentAttack += SentryEyesFunction;
                 onCurrentAttack += CameraEyesFunction;
 
                 break;
@@ -81,7 +85,9 @@ public class BossAttackManager : MonoBehaviour
 
         WaterManager.instance.targetAmplitude = 1;
 
-        SetEyesTargetPositions(Vector3.right * 100, Vector3.right * -100);
+        SetEyesTargetPositions(new Vector3(20, 100,0), new Vector3(20, 100, 0));
+
+        SetEyesSentryPositions(new Vector3(20, 100, 0), new Vector3(20, 100, 0));
 
         rightEyeController.currentEyeState = StinkEyeEnemy.EyeState.Aiming;
 
@@ -94,6 +100,8 @@ public class BossAttackManager : MonoBehaviour
         waveAttackTimer = 0;
 
         camAttackTimer = 0;
+
+        sentryAttackTimer = 0;
 
 
     }
@@ -204,7 +212,7 @@ public class BossAttackManager : MonoBehaviour
         {
             playerFocusTimer += Time.deltaTime;
         }
-        else if (playerFocusTimer != 8)
+        else if (rightEyeController.target != player.transform && leftEyeController.target != player.transform)
         {
             if (leftEyeController.currentEyeState != StinkEyeEnemy.EyeState.Bitten)
             {
@@ -248,7 +256,73 @@ public class BossAttackManager : MonoBehaviour
 
     void SentryEyesFunction()
     {
+        if (firstFunctionCall)
+        {
 
+            firstFunctionCall = false;
+
+            Debug.Log("This is the first frame of an attack!");
+            rightSentryEyeController.target = cam.transform;
+            leftSentryEyeController.target = cam.transform;
+
+            playerFocusTimer = 0;
+
+            leftSentryEyeController.aimTimer = 0;
+
+            rightSentryEyeController.aimTimer = 0;
+
+
+            SetEyesSentryPositions(
+            new Vector3(0, 1f, 0)
+            , new Vector3(38.5f, 1f, 0)
+            );
+
+        }
+
+
+        if (playerFocusTimer < playerFocusTime)
+        {
+            playerFocusTimer += Time.deltaTime;
+        }
+        else if (rightSentryEyeController.target != player.transform && leftSentryEyeController.target != player.transform)
+        {
+            if (leftSentryEyeController.currentEyeState != StinkEyeEnemy.EyeState.Bitten)
+            {
+                leftSentryEyeController.currentEyeState = StinkEyeEnemy.EyeState.Aiming;
+                leftSentryEyeController.aimTimer = 0;
+            }
+
+
+            if (rightSentryEyeController.currentEyeState != StinkEyeEnemy.EyeState.Bitten)
+            {
+                rightSentryEyeController.currentEyeState = StinkEyeEnemy.EyeState.Aiming;
+                rightSentryEyeController.aimTimer = 0;
+            }
+
+            rightSentryEyeController.target = player.transform;
+            leftSentryEyeController.target = player.transform;
+
+            playerFocusTimer = 8;
+
+        }
+        else
+        {
+
+
+        }
+
+
+        if (sentryAttackTimer < sentryAttackTime)
+        {
+            sentryAttackTimer += Time.deltaTime;
+        }
+        else
+        {
+            onEndBossAttack.Invoke();
+
+            sentryAttackTimer = 0;
+
+        }
 
     }
 
@@ -280,8 +354,18 @@ public class BossAttackManager : MonoBehaviour
     public float playerFocusTime = 3;
     public float playerFocusTimer = 0;
 
-   
-    
+
+    //Sentry attack stats!
+
+    public float sentryAttackTime = 10;
+    public float sentryAttackTimer = 0;
+
+    public Transform leftSentryEye;
+    public Transform rightSentryEye;
+    StinkEyeEnemy leftSentryEyeController;
+    StinkEyeEnemy rightSentryEyeController;
+
+
 
 
     void Start()
@@ -300,6 +384,10 @@ public class BossAttackManager : MonoBehaviour
 
         leftEyeController = leftEye.GetComponent<StinkEyeEnemy>();
         rightEyeController = rightEye.GetComponent<StinkEyeEnemy>();
+
+
+        leftSentryEyeController = leftSentryEye.GetComponent<StinkEyeEnemy>();
+        rightSentryEyeController = rightSentryEye.GetComponent<StinkEyeEnemy>();
     }
 
     // Update is called once per frame
@@ -321,9 +409,10 @@ public class BossAttackManager : MonoBehaviour
 
     }
 
-    void SetEyesSentryPosition()
+    void SetEyesSentryPositions(Vector3 leftPos, Vector3 rightPos)
     {
-
+        leftSentryEyeController.targetPos = leftPos;
+        rightSentryEyeController.targetPos = rightPos;
 
 
     }

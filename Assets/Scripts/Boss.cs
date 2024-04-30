@@ -44,10 +44,22 @@ public class Boss : BitableObject
 
     List<Transform> randomWarpsBag = new List<Transform>();
 
+    List<BossAttackManager.BossAttackType> randomAttacksBag;
+
+    private Animator myAnimator;
+
+    [SerializeField]
+    float bossInvincibilityFramessTimeInSeconds = 2;
+    float bossInvincibilityFramessTimer = 0;
+
+    [SerializeField]
+    private bool canBeDamaged = true;
 
     protected override void Start()
     {
         base.Start();
+
+        randomAttacksBag = new List<BossAttackManager.BossAttackType>();
 
         player = GameObject.Find("PPPlayer").transform;
 
@@ -57,17 +69,25 @@ public class Boss : BitableObject
 
         MakerandomWarpsBag();
 
+        MakeRandomAttacksBag(3);
+
 
         BossAttackManager.onEndBossAttack += ActivateCooldown;
 
         //This next line is just testing to see if we can call the delegate!
         //BossAttackManager.onBeginBossAttack.Invoke(BossAttackManager.BossAttackType.Flooding);
 
+        myAnimator = GetComponent<Animator>();
+
+        
+
     }
 
     void Update()
     {
-        
+        transform.position = Vector3.Lerp(transform.position, targetPos, flyAwayLerpSpeed * Time.deltaTime);
+
+
 
         if (currentBossState != BossState.vulnerable)
         {
@@ -86,7 +106,22 @@ public class Boss : BitableObject
                 
             }
 
-            transform.position = Vector3.Lerp(transform.position, targetPos, flyAwayLerpSpeed * Time.deltaTime);
+            
+            if (canBeDamaged == false )
+            {
+                if (bossInvincibilityFramessTimer < bossInvincibilityFramessTimeInSeconds)
+                {
+                    bossInvincibilityFramessTimer += Time.deltaTime;
+                }
+                else
+                {
+                    canBeDamaged = true;
+                    bossInvincibilityFramessTimer = 0;
+                }
+
+                
+            }
+
         }
 
         switch (currentBossState)
@@ -123,9 +158,18 @@ public class Boss : BitableObject
                 {
                     if (!BossAttackManager.currentlyAttacking)
                     {
-                        BossAttackManager.BossAttackType randomAttack = (BossAttackManager.BossAttackType)UnityEngine.Random.Range(0, 2); //System.Enum.GetValues(typeof(BossAttackManager.BossAttackType)).Length);
+                        //BossAttackManager.BossAttackType randomAttack = (BossAttackManager.BossAttackType)UnityEngine.Random.Range(0, 3); //System.Enum.GetValues(typeof(BossAttackManager.BossAttackType)).Length);
 
-                        BossAttackManager.onBeginBossAttack.Invoke(randomAttack);
+                        BossAttackManager.BossAttackType randomAttackPicked = randomAttacksBag[0];
+
+                        randomAttacksBag.Remove(randomAttackPicked);
+
+                        if (randomAttacksBag.Count == 0)
+                        {
+                            MakeRandomAttacksBag(3);
+                        }
+
+                        BossAttackManager.onBeginBossAttack.Invoke(randomAttackPicked);
 
                         Debug.Log("Take that!");
 
@@ -142,8 +186,14 @@ public class Boss : BitableObject
 
 
             case BossState.vulnerable:
-                //This is when the boss will be too tired to run away!
+
                 
+                targetPos = new Vector3(0, 1, 0);
+
+                myAnimator.SetBool("Vulnerable", true);
+
+                //This is when the boss will be too tired to run away!
+
                 break;
 
 
@@ -167,6 +217,10 @@ public class Boss : BitableObject
     {
         staminaPoints--;
 
+        canBeDamaged = false;
+
+        myAnimator.SetTrigger("Damaged");
+
         if (staminaPoints <= 0 && currentBossState != BossState.Bitten)
         {
             BossAttackManager.onEndBossAttack -= ActivateCooldown;
@@ -174,7 +228,7 @@ public class Boss : BitableObject
             currentBossState = BossState.vulnerable;
 
 
-
+            //This is where we need to set the parameter that they can go into their vulnerable animation, and that they can't go back to idle now.
         }
         else
         {
@@ -189,6 +243,8 @@ public class Boss : BitableObject
             }
 
             targetPos = randomWarpPointPicked.position;
+
+            
 
            
         }
@@ -212,6 +268,26 @@ public class Boss : BitableObject
             randomWarpsBag[randomIndex] = temporary;
         }
     }
+
+    void MakeRandomAttacksBag(int numberOfAttacks)
+    {
+        for (int i = 0; i < numberOfAttacks; i++)
+        {
+            randomAttacksBag.Add( (BossAttackManager.BossAttackType)i );
+        }
+
+        // Knuth shuffle algorithm :: courtesy of Wikipedia :)
+        for (int t = 0; t < randomAttacksBag.Count; t++)
+        {
+            BossAttackManager.BossAttackType temporary = randomAttacksBag[t];
+            int randomIndex = UnityEngine.Random.Range(t, randomAttacksBag.Count);
+            randomAttacksBag[t] = randomAttacksBag[randomIndex];
+            randomAttacksBag[randomIndex] = temporary;
+        }
+    }
+
+
+
 
     protected virtual bool OnTriggerEnter(Collider other)
     {
