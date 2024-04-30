@@ -76,10 +76,14 @@ public class PigeonController : MonoBehaviour
     public Transform footLevel;
 
 
+    private ParticleSystem giblets;
+
     // Start is called before the first frame update
     void Start()
     {
         controller = GetComponent<CharacterController>();
+        giblets = GetComponent<ParticleSystem>();
+
         cam = Camera.main;
 
         UnRagdoll();
@@ -140,7 +144,9 @@ public class PigeonController : MonoBehaviour
 
                         onWingFlap.Invoke(1);
 
-                        
+                        SoundManager.instance.PlaySound(2);
+
+
                     }
                     else
                     {
@@ -169,6 +175,8 @@ public class PigeonController : MonoBehaviour
 
                             //Debug.Log("Alleyoop!");
                             verticalVelocity = Mathf.Sqrt(2 * jumpHeight * gravity);
+
+                            SoundManager.instance.PlaySound(3);
                         }
                         else
                         {
@@ -228,10 +236,6 @@ public class PigeonController : MonoBehaviour
                     respawnTimer = 0;
 
                     //Debug.Log("Welcome back, player!");
-
-
-
-                    
 
                     transform.position = new Vector3(0, 1, 0);
 
@@ -325,6 +329,12 @@ public class PigeonController : MonoBehaviour
     {
         if (currentPigeonState != PigeonState.Respawning)
         {
+            giblets.Play();
+
+            SoundManager.instance.PlaySound(4);
+
+            transform.position += new Vector3(0, 800, 0);
+
             //Here we'll use feather particles to signifiy when the player gets hit and disappears;
 
             Debug.Log("Hit once!");
@@ -344,10 +354,10 @@ public class PigeonController : MonoBehaviour
 
             currentPigeonState = PigeonState.Respawning;
 
+            transform.parent = null;
+
+
             
-
-
-            transform.position += new Vector3(0, 800, 0);
 
             
 

@@ -158,18 +158,30 @@ public class Boss : BitableObject
                 {
                     if (!BossAttackManager.currentlyAttacking)
                     {
-                        //BossAttackManager.BossAttackType randomAttack = (BossAttackManager.BossAttackType)UnityEngine.Random.Range(0, 3); //System.Enum.GetValues(typeof(BossAttackManager.BossAttackType)).Length);
 
-                        BossAttackManager.BossAttackType randomAttackPicked = randomAttacksBag[0];
-
-                        randomAttacksBag.Remove(randomAttackPicked);
-
-                        if (randomAttacksBag.Count == 0)
+                        if (staminaPoints <= 1)
                         {
-                            MakeRandomAttacksBag(3);
+                            BossAttackManager.onBeginBossAttack.Invoke(BossAttackManager.BossAttackType.Madness);
                         }
+                        else
+                        {
+                            //BossAttackManager.BossAttackType randomAttack = (BossAttackManager.BossAttackType)UnityEngine.Random.Range(0, 3); //System.Enum.GetValues(typeof(BossAttackManager.BossAttackType)).Length);
 
-                        BossAttackManager.onBeginBossAttack.Invoke(randomAttackPicked);
+                            BossAttackManager.BossAttackType randomAttackPicked = randomAttacksBag[0];
+
+                            randomAttacksBag.Remove(randomAttackPicked);
+
+                            if (randomAttacksBag.Count == 0)
+                            {
+                                MakeRandomAttacksBag(3);
+
+                                
+                            }
+
+                            BossAttackManager.onBeginBossAttack.Invoke(randomAttackPicked);
+
+                        }
+                        
 
                         Debug.Log("Take that!");
 
@@ -232,6 +244,7 @@ public class Boss : BitableObject
         }
         else
         {
+            
 
             Transform randomWarpPointPicked = randomWarpsBag[0];
 
@@ -248,6 +261,8 @@ public class Boss : BitableObject
 
            
         }
+
+        SoundManager.instance.PlaySound(1);
 
         BossAttackManager.onEndBossAttack.Invoke();
     }

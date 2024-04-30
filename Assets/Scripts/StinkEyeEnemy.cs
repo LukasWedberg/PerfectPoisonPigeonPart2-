@@ -153,6 +153,8 @@ public class StinkEyeEnemy : BitableObject
 
                             //Debug.Log("PEW PEW");
 
+                            SoundManager.instance.PlaySound(0);
+
                             rapidFireTimer = 0;
 
                             shotsLeft--;

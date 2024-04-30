@@ -212,6 +212,14 @@ public class CameraManager : MonoBehaviour
     bool CheckBothCharactersVisible()
     {
 
+        //Won't hurt to try checking the dot product of the camera forward direction and the direction to the boss from the camera
+
+        if ( Vector3.Dot( (target2.position - transform.position).normalized, transform.forward) < 0  )
+        {
+            return false;
+        }
+
+
         //First we check if the player is onscreen
 
         Vector3 playerScreenPos = Camera.main.WorldToScreenPoint(target.position);
@@ -241,6 +249,9 @@ public class CameraManager : MonoBehaviour
         {
             return true;
         }
+
+
+
 
 
         return false;
